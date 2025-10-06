@@ -7,6 +7,7 @@ import { UsersModule } from 'src/users/users.module';
 import { MembershipModule } from 'src/membership/membership.module';
 import { AuthModule } from 'src/auth/auth.module';
 
+
 @Module({
   imports: [TypeOrmModule.forFeature([OrgEntity]),UsersModule, MembershipModule, AuthModule],
   controllers: [OrgsController],

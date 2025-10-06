@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { MembershipService } from 'src/membership/membership.service';
 import { OrgRole } from 'src/membership/entities/membership.entity';
 
+
 @Injectable()
 export class OrgsService {
     constructor(@InjectRepository(OrgEntity) private readonly orgRep: Repository<OrgEntity>, 
@@ -60,10 +61,12 @@ export class OrgsService {
             where: {
                 memberships: {
                     userId: user.id
-                }
+                },
+                tasks: true
             },
             relations: {
-                memberships: true
+                memberships: true,
+                tasks: true
             }
         })
         return orgs
@@ -80,7 +83,8 @@ export class OrgsService {
                 }
             },
             relations: {
-                memberships: true
+                memberships: true,
+                tasks: true
             }
         })
         if(!userInOrg) throw new NotFoundException('You are not a member of this org or org does not exist')
