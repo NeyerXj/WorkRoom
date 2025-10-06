@@ -12,6 +12,7 @@ async function bootstrap() {
     new FastifyAdapter({ logger: false }),
     { bufferLogs: true },
   );
+  console.log('Adapter type:', app.getHttpAdapter().getType());
 
   // Подключаем твой Pino-логгер
   const logger = app.get(PinoLogger);

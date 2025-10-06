@@ -71,7 +71,7 @@ export class OrgsService {
 
     async getOrgById(userId: string, orgId: string){
         const user = await this.userService.getUserById(userId)
-        if(!user) throw new NotFoundException('User not found')
+        if(!user) throw new NotFoundException('User not found!')
         const userInOrg = await this.orgRep.findOne({
             where: {
                 id: orgId,
@@ -84,6 +84,8 @@ export class OrgsService {
             }
         })
         if(!userInOrg) throw new NotFoundException('You are not a member of this org or org does not exist')
+        
+        if (orgId !== userInOrg.id){throw new NotFoundException('Org not found')}
         const org = await this.orgRep.findOne({where:{
             id: orgId},relations: {
                 memberships: true
@@ -91,5 +93,33 @@ export class OrgsService {
             if(!org) throw new NotFoundException('Org not found')
 
         return org
+        }
+
+        async deleteOrgById(userId: string, orgId: string){
+            const user = await this.userService.getUserById(userId)
+            console.log("OrgId: ", orgId)
+            if(!user) throw new NotFoundException('User not found!')
+            const userInOrg = await this.orgRep.findOne({
+                where: {
+                    id: orgId,
+                    memberships: {
+                        userId: user.id
+                    }
+                },
+                relations: {
+                    memberships: true
+                }
+            })
+            if(!userInOrg) throw new NotFoundException('You are not a member of this org or org does not exist')
+            const check = await this.memberService.checkRulesInOrg(orgId, userId)
+            if(!check) throw new NotFoundException('You have no permission to delete this org')
+            const org = await this.orgRep.findOne({where:{
+                id: orgId},relations: {
+                    memberships: true
+                }})
+                if(!org) throw new NotFoundException('Org not found')
+    
+            await this.orgRep.delete({id: orgId})
+            return {message: 'Org deleted'}
         }
 }

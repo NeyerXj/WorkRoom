@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { OrgsService } from './orgs.service';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
@@ -40,11 +40,22 @@ export class OrgsController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('get-org')
+  @Get('get-org/:orgId')
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Получить организацию' })
   @ApiResponse({ status: 200, description: 'Данные организации' })
   async getOrg(@CurrentUser('id') id: string, @Param('orgId') orgId: string){
     return await this.orgsService.getOrgById(id, orgId)
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('delete/:orgId')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Удалить организацию' })
+  @ApiResponse({ status: 200, description: 'Организация удалена' })
+  async deleteOrg(@CurrentUser('id') id: string, @Param('orgId') orgId: string){
+    await console.log("OrgId api", orgId)
+    if(!orgId) throw new NotFoundException('OrgId is required')
+    return await this.orgsService.deleteOrgById(id, orgId)
   }
 }

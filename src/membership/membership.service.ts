@@ -32,9 +32,18 @@ async addMembers(orgId: string, userIds: string[], role: OrgRole) {
 
 async checkRulesInOrg(orgId: string, userId: string) {
     const membership = await this.mebmerRep.findOne({where: {orgId, userId}})
-    if(!membership) return
-    if(membership.role === OrgRole.member) return false
+    if(!membership) {
+      console.log('no membership')
+      return false}
+    if(membership.role === OrgRole.member) {
+      console.log(membership)
+      console.log(orgId)
+      return false}
+      console.log('ok')
     return true
 }
+    async getMembersInOrg(orgId: string) {
+        return await this.mebmerRep.find({where: {orgId}})
+    }
 
 }
