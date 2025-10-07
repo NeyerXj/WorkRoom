@@ -1,10 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTaskDto {
     @IsString({message: 'Title must be a string'})
     @IsNotEmpty({message: 'Title is required'})
     @ApiProperty({ example: 'New Task' })
+    @MaxLength(255)
     title: string;
     @IsString({message: 'Description must be a string'})
     @IsOptional()
