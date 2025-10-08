@@ -2,10 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
+import productsData from '../data/products.json';
+
+type Product = typeof productsData[0];
 
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(UserEntity) private readonly usersRep: Repository<UserEntity>) {}
+    private products: Product[] = productsData;
 
     async getUserById(userId: string){
         const user = await this.usersRep.findOne({where:{
@@ -19,5 +23,11 @@ export class UsersService {
         if(!res.ok) throw new NotFoundException('Could not fetch time');
         const data = await res.json();
         return {utc_datetime: data.utc_datetime, timezone: data.timezone, client: data.client_ip};
+    }
+    async getProducts(){
+        return this.products;
+    }
+    getByCategory(category: string){
+        return this.products.filter(p => p.category.toLowerCase() === category.toLowerCase());
     }
 }
