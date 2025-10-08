@@ -14,4 +14,10 @@ export class UsersService {
         if(!user) throw new NotFoundException('User not found');
         return user;
     }
+    async getCurrentTime(){
+        const res = await fetch('http://worldtimeapi.org/api/timezone/Etc/UTC');
+        if(!res.ok) throw new NotFoundException('Could not fetch time');
+        const data = await res.json();
+        return {utc_datetime: data.utc_datetime, timezone: data.timezone, client: data.client_ip};
+    }
 }
